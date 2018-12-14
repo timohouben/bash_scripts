@@ -34,8 +34,8 @@ submitfile=${dir_sim}qsub_${name_dir%?}.sh
 #$ -binding linear:1
 
 # output files	
-#$ -o ${dir_sim}${name_dir%?}.OUT
-#$ -e ${dir_sim}${name_dir%?}.ERR
+#$ -o ${dir_sim}${name_dir%?}_ogs.OUT
+#$ -e ${dir_sim}${name_dir%?}_ogs.ERR
 ${dir_sim}ogs ${dir_sim}${projectname}
 EOF
 

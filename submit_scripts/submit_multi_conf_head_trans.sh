@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# NEW VERSION: CHANGED AT DEC 11th 18
-# Changes:
-# projectname of job on eve is equvalent to projectname+folder name and not any more equal to the ogs project name
+# script to execute a python script for multiple folders as job for eve
+# cwd should containt multiple folders with ogs runs
 
 set -e
 
 # set home and working directory
 dir_home='/home/houben'
 dir_work='/work/houben'
-projectname='transect_01'
+projectname='head_timeseries'
 # set prejectname
 CWD="$(pwd)"
 
@@ -18,10 +17,6 @@ for directories in */ ; do
 name_dir=$directories
 dir_sim=$CWD/$name_dir
 
-### SoftLinks to OGS-Unix-Executable ###
-ln -sf /home/houben/OGS/ogs ${dir_sim}ogs
-
-
 ### Neuschreiben des qsub-Skripts ###
 
 submitfile=${dir_sim}qsub_${name_dir%?}.sh
@@ -29,14 +24,14 @@ submitfile=${dir_sim}qsub_${name_dir%?}.sh
 #!/bin/bash
 #$ -S /bin/bash
 #$ -N ${projectname}${directories%?}
-#$ -l h_rt=86400
+#$ -l h_rt=3600
 #$ -l h_vmem=4G
 #$ -binding linear:1
 
 # output files	
-#$ -o ${dir_sim}${name_dir%?}.OUT
-#$ -e ${dir_sim}${name_dir%?}.ERR
-${dir_sim}ogs ${dir_sim}${projectname}
+#$ -o ${dir_sim}${name_dir%?}_head_timeseries.OUT
+#$ -e ${dir_sim}${name_dir%?}_head_timeseries.ERR
+/home/houben/python_pkg/python_scripts/python_scripts/head_ogs_vs_gw-model/transient/multi_conf_head_ogs_vs_gw_model_trans.py "${dir_sim%?}"
 EOF
 
 qsub ${submitfile}
