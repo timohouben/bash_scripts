@@ -1,4 +1,6 @@
+#!/bin/bash
 declare -i count=0;
+ready=();
 for i in *;
   do
     #line = $(wc -l < $i/*.OUT)
@@ -7,7 +9,8 @@ for i in *;
     then
       echo $i is ready, $count;
       count=$count+1;
-    else
+      ready+=" $i"
       echo $i is not ready. Last time step: $(tail -n 100 $i/*.OUT | grep "Time step:");
     fi;
   done
+echo $ready >> ready.txt
