@@ -1,14 +1,16 @@
 #!/bin/bash
 
-# script to execute a python script for multiple folders as job for eve
-# cwd should containt multiple folders with ogs runs
+# Created January 14th
+# Script to submit multiple jobs for mpi runs for ogs
+# projectname of job on eve is equvalent to projectname+folder
 
+read -p 'Number of slots: ' number_of_slots
 set -e
 
 # set home and working directory
 dir_home='/home/houben'
 dir_work='/work/houben'
-projectname='head_timeseries'
+projectname='transect'
 # set prejectname
 CWD="$(pwd)"
 
@@ -17,6 +19,10 @@ for directories in */ ; do
 name_dir=$directories
 dir_sim=$CWD/$name_dir
 
+### SoftLinks to OGS-Unix-Executable ###
+ln -sf /home/houben/OGS_mpi_own/ogs5/build/bin/ogs ${dir_sim}ogs
+
+
 ### Neuschreiben des qsub-Skripts ###
 
 submitfile=${dir_sim}qsub_${name_dir%?}.sh
@@ -24,18 +30,17 @@ submitfile=${dir_sim}qsub_${name_dir%?}.sh
 #!/bin/bash
 #$ -S /bin/bash
 #$ -N ${projectname}${directories%?}
-#$ -l h_rt=3600
+#$ -l h_rt=86400
 #$ -l h_vmem=4G
-#$ -binding linear:1
 
-# output files	
-#$ -o ${dir_sim}${name_dir%?}_head_timeseries.OUT
-#$ -e ${dir_sim}${name_dir%?}_head_timeseries.ERR
+# output files will be merged to one single file
+#$ -o ${dir_sim}${name_dir%?}_ogs.log
+#$ -j y	
 
-source /home/houben/env1/bin/activate
-#pip install -U vtk
+#$ -pe openmpi-orte $number_of_slots
 
-/home/houben/python_pkg/python_scripts/python_scripts/head_ogs_vs_gw-model/transient/multi_conf_head_ogs_vs_gw_model_trans.py "${dir_sim%?}"
+module load openmpi/gcc/1.8.8-1
+mpirun -np $number_of_slots ${dir_sim}ogs ${dir_sim}${projectname}
 EOF
 
 qsub ${submitfile}
