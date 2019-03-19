@@ -1,5 +1,6 @@
 # script to replace the last line of all [^r]*.txt files in all
 # directories and subdirectories with the second last line
+# this script is currently running on eve but makes some troubles locally...
 
 for D in `find . -maxdepth 1 -type d`;
 do
