@@ -31,4 +31,5 @@ for j in "${threshold[@]}";
     done
 done
 
+mv TEMP/* $path
 rm -r TEMP
