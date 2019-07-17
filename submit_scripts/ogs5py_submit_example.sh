@@ -9,7 +9,7 @@ set -e
 # set home and working directory
 dir_home='/home/houben'
 dir_work='/work/houben'
-projectname='transect'
+projectname='plot_head'
 # set prejectname
 CWD="$(pwd)"
 
@@ -18,10 +18,6 @@ for directories in */ ; do
 name_dir=$directories
 dir_sim=$CWD/$name_dir
 
-### SoftLinks to OGS-Unix-Executable ###
-ln -sf /home/houben/OGS_source/ogs ${dir_sim}ogs
-
-
 ### Neuschreiben des qsub-Skripts ###
 
 submitfile=${dir_sim}qsub_${name_dir%?}.sh
@@ -29,14 +25,22 @@ submitfile=${dir_sim}qsub_${name_dir%?}.sh
 #!/bin/bash
 #$ -S /bin/bash
 #$ -N ${projectname}${directories%?}
-#$ -l h_rt=259200
-#$ -l h_vmem=8G
+#$ -l h_rt=600
+#$ -l h_vmem=2G
 #$ -binding linear:1
 
 # output files	
-#$ -o ${dir_sim}${name_dir%?}_ogs.OUT
-#$ -e ${dir_sim}${name_dir%?}_ogs.ERR
-${dir_sim}ogs ${dir_sim}${projectname}
+#$ -o ${dir_sim}${name_dir%?}_plot_head.OUT
+#$ -e ${dir_sim}${name_dir%?}_plot_head.ERR
+
+
+module use /software/easybuild-E5-2690v4/modules/all/Core
+module load foss/2018b
+module load python/3.6.2
+module load libGLU
+source /home/houben/pyenv3.6.2/bin/activate
+
+python3 ${dir_sim}script.py ${dir_sim%?}
 EOF
 
 qsub ${submitfile}

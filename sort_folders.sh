@@ -2,7 +2,7 @@
 
 # set threshold
 declare -a threshold
-for i in {1..100};
+for i in {100..203};
 do
     j=$(($i*10))
     threshold+=(${j})
@@ -24,11 +24,12 @@ for j in "${threshold[@]}";
     mkdir $path/smaller_than_${j}
     for i in `ls -1 $path/TEMP `;
         do
-        if ((`echo "$i" | awk -F'_' '{print $1}' | sed 's/^0//g'` < $j));
+        if ((`echo "$i" | awk -F'_' '{print $1}' | sed 's/^000//g'` < $j));
             then
             mv TEMP/${i} smaller_than_${j}/;
         fi;
     done
 done
 
+mv TEMP/* $path
 rm -r TEMP

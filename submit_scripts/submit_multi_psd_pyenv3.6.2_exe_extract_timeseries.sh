@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# script to execute a python script for multiple folders as job for eve
-# cwd should containt multiple folders with ogs runs
+#  script to execute a python script for multiple folders as job for eve
+# script has to be at the same level as the folders of the ogs runs to run the script. 
 
 set -e
 
 # set home and working directory
 dir_home='/home/houben'
 dir_work='/work/houben'
-projectname='head_timeseries'
-# set prejectname
+projectname='exe_ts_'
+
+# set projectname
 CWD="$(pwd)"
 
 # loop over all directories and subdirectories and submit a relating job
@@ -19,7 +20,7 @@ dir_sim=$CWD/$name_dir
 
 ### Neuschreiben des qsub-Skripts ###
 
-submitfile=${dir_sim}qsub_${name_dir%?}.sh
+submitfile=${CWD}/qsub_${name_dir%?}.sh
 	cat > ${submitfile} << EOF
 #!/bin/bash
 #$ -S /bin/bash
@@ -29,13 +30,16 @@ submitfile=${dir_sim}qsub_${name_dir%?}.sh
 #$ -binding linear:1
 
 # output files	
-#$ -o ${dir_sim}${name_dir%?}_head_timeseries.OUT
-#$ -e ${dir_sim}${name_dir%?}_head_timeseries.ERR
+#$ -o ${CWD}/${name_dir%?}_multi_psd.OUT
+#$ -e ${CWD}/${name_dir%?}_multi_psd.ERR
 
+module use /software/easybuild-E5-2690v4/modules/all/Core
+module load foss/2018b
 module load python/3.6.2
+module load libGLU
 source /home/houben/pyenv3.6.2/bin/activate
 
-python3 /home/houben/python_pkg/scripts/head_ogs_vs_gw-model/transient/multi_conf_head_ogs_vs_gw_model_trans.py "${dir_sim%?}"
+python3 /home/houben/python_pkg/scripts/spectral_analysis/exe_extract_timeseries.py "${dir_sim%?}" "mean" "GROUNDWATER_FLOW" 1 "True"
 EOF
 
 qsub ${submitfile}
