@@ -1,47 +1,42 @@
 #!/bin/bash
 
-# NEW VERSION: CHANGED AT DEC 11th 18
-# Changes:
-# projectname of job on eve is equvalent to projectname+folder name and not any more equal to the ogs project name
-
+# Copy this script in the parent directory of multiple ogs model runs.
+# Specify:
+# h_rt
+# h_vmem
+# path/to/ogs/executable
 set -e
 
-# set home and working directory
-dir_home='/home/houben'
-dir_work='/work/houben'
 projectname='transect'
-# set prejectname
 CWD="$(pwd)"
 
 # loop over all directories and subdirectories and submit a relating job
-for directories in */ ; do
-name_dir=$directories
-dir_sim=$CWD/$name_dir
+for dir in *; do
+    path_dir=$CWD/$dir
 
-### SoftLinks to OGS-Unix-Executable ###
-ln -sf /home/houben/OGS_source/ogs ${dir_sim}ogs
+    ### SoftLinks to OGS-Unix-Executable ###
+    ln -sf /home/houben/OGS_source/ogs ${path_dir}/eve/ogs
 
+    ### Neuschreiben des qsub-Skripts ###
 
-### Neuschreiben des qsub-Skripts ###
+    submitfile=${path_dir}/eve/qsub_${dir}.sh
 
-submitfile=${dir_sim}qsub_${name_dir%?}.sh
-	cat > ${submitfile} << EOF
+cat > ${submitfile} << EOF
 #!/bin/bash
+#$ -wd $CWD
 #$ -S /bin/bash
-#$ -N ${projectname}${directories%?}
-#$ -l h_rt=259200
+#$ -N ogs_${dir}
+#$ -l h_rt=864000
 #$ -l h_vmem=8G
 #$ -binding linear:1
 
 # output files	
-#$ -o ${dir_sim}${name_dir%?}_ogs.OUT
-#$ -e ${dir_sim}${name_dir%?}_ogs.ERR
-${dir_sim}ogs ${dir_sim}${projectname}
+#$ -o ${path_dir}/eve/${dir}.OUT
+#$ -e ${path_dir}/eve/${dir}.ERR
+${path_dir}/eve/ogs ${path_dir}/${projectname}
 EOF
 
-qsub ${submitfile}
-echo 'Your job should be in progress! Name of directory:'
-echo ${dir_sim}
-
-
+    qsub ${submitfile}
+    echo 'Your job should be in progress! Name of directory:'
+    echo ${dir}
 done

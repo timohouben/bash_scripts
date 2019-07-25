@@ -1,16 +1,19 @@
 # Specify the number ob slots manually! In case you run the mpi_local_generate_ogs.py the number of cores has to be the same in both scripts
-# specify the path for 1) output file and 2) output directory and 3) job_name 4) the number of slots
+# specify the path for 1) output file and 2) output directory and 3) job_name 4) the number of slots 5) the working directory
 
 #!/bin/bash
 
 #$ -S /bin/bash
+#$ -wd /work/houben/20190717_SA_hetero_block_2
 #$ -N gen_ogs_20170717
-#$ -o /work/houben/20190717_SA_hetero_block_2/$JOB_ID.OUT
-#$ -e /work/houben/20190717_SA_hetero_block_2/$JOB_ID.ERR
+#$ -o /work/houben/20190717_SA_hetero_block_2/$JOB_ID_gen_ogs.OUT
+#$ -e /work/houben/20190717_SA_hetero_block_2/$JOB_ID_gen_ogs.ERR
 #$ -l h_rt=3600
 #$ -l h_vmem=8G
-
 #$ -pe openmpi-orte 10
+
+# disable core dump
+ulimit -c 0
 
 # load modules for open mpi
 module use /software/easybuild-E5-2690v4/modules/all/Core
