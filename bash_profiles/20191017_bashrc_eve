@@ -1,0 +1,58 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+alias ogsremove="/home/houben/bash/bash_scripts/remove_ogs_input_and_output.sh"
+alias simulations_terminated="/home/houben/bash/bash_scripts/simulations_terminated.sh"
+
+alias py362="module load python/3.6.2"
+alias actpy362="source /home/houben/pyenv3.6.2/bin/activate"
+alias actpy27="source /home/houben/env1/bin/activate"
+alias tiv="/home/houben/TerminalImageViewer/TerminalImageViewer/src/main/cpp/tiv -256"
+alias mpmetis="/home/houben/OGS_mpi/mesh_partition/bin/mpmetis"
+alias partmesh="/home/houben/OGS_mpi/mesh_partition/bin/partmesh"
+alias ll="ls -al"
+
+# Git shortcuts
+alias gs='git stage .'
+alias gc='git commit -m '
+alias gps='git push'
+alias gpl='git pull'
+
+# some other shortcuts
+bind '"\C-p": shell-backward-kill-word'
+
+# export path for pythonenvs
+#export MODULEPATH=/global/apps/chspython/modules:$MODULEPATH
+
+# User specific aliases and functions
+module load uge
+module load imagemagick
+module load emacs
+#module load ImageMagick
+
+## modules for OGS MPI
+#module use /global/apps/modulefiles
+
+#module load cmake
+#module load gcc/6.2.0-1
+#module load openmpi/gcc/1.8.8-1
+#module load ninja/1.8.2
+
+# Libraries
+#module load boost/1.55.0-4
+#module load doxygen/1.8.7-1_gcc_4.8.1
+#module load lapack/gcc/3.7.0-1
+#module load petsc/3.7.6_maint_gcc6.2.0_openmpi_gcc_1.8.8-1
+
+# Tools
+#module load openmpi/gcc/1.8.8-1
+#module load numdiff/5.8.1-1
+#module rm gmp/5.1.2-1
+#module load gmp-shared/6.1.2-1
+
+
+export PATH=$PATH:/data/ogs/phreeqc/bin
