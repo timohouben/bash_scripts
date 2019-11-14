@@ -4,19 +4,24 @@
 #!/bin/bash
 
 #$ -S /bin/bash
-#$ -wd /work/houben/20190717_SA_hetero_block_2
-#$ -N gen_ogs_20170717
-#$ -o /work/houben/20190717_SA_hetero_block_2/$JOB_ID_gen_ogs.OUT
-#$ -e /work/houben/20190717_SA_hetero_block_2/$JOB_ID_gen_ogs.ERR
-#$ -l h_rt=3600
+#$ -wd /work/houben/test
+#$ -N gen_ogs_20170726
+#$ -o /work/houben/test/$JOB_ID_gen_ogs.OUT
+#$ -e /work/houben/test/$JOB_ID_gen_ogs.ERR
+#$ -l h_rt=120
 #$ -l h_vmem=16G
-#$ -pe openmpi-orte 50
+#$ -pe openmpi-orte 100
 
 # disable core dump (like this it's not working)
 # ulimit -c 0
 
 # load modules for mpi
-module use /software/easybuild-E5-2690v4/modules/all/Core
+module use /software/easybuild-broadwell/modules/all/Core
+
+# Führt zu fehlern:
+# module use /software/easybuild-E5-2690v4/modules/all/Core
+
+
 module load uge/8.5.5-easybuild
 module load foss/2018b
 
@@ -32,7 +37,7 @@ module load gcc/4/9.4-3
 source /home/houben/pyenv3.6.2/bin/activate
 
 # mpirun with script to execute
-mpirun -np $NSLOTS python3 /home/houben/python/scripts/ogs5py/20190717_generate_ogs_hetero_block_2_EVE.py /work/houben/20190717_SA_hetero_block_2 $NSLOTS
+mpirun -np $NSLOTS python3 /home/houben/python/scripts/ogs5py/20190726_generate_ogs_hetero_ensemble_aniso_EVE.py /work/houben/test $NSLOTS
 
 # run this stuff to surpress fork() warning
 # mpirun --mca mpi_warn_on_fork 0 -np 100 python3 path_script dir_out 100

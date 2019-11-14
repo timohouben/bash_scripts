@@ -5,11 +5,13 @@ not_ready=$(date);
 not_ready+="\n######################################################################"
 echo "Specify the /subfolder (including /)  which contains the .err and .out files. If there is no subfolder, just press enter."
 read subfolder
+echo "For which extension should be searched?"
+read extension
 for i in *$subfolder;
   do
     #line = $(wc -l < $i/*.OUT)
     #echo ${line}
-    if tail -n 50 $i/*.OUT | grep -q "Your simulation is terminated normally";
+    if tail -n 50 $i/*$extension | grep -q "Your simulation is terminated normally";
     then
 	echo $i is ready, $count;
 	count=$count+1;
