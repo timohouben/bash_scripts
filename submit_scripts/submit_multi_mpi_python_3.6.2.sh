@@ -12,36 +12,29 @@
 # comment
 set -e
 comment="_SA_20191114"
+NSLOTS=2
 
-projectname='transect'
 CWD="$(pwd)"
 
 # loop over all directories and subdirectories and submit a relating job
 for dir in *; do
     path_dir=$CWD/$dir
 
-#    ### SoftLinks to OGS-Unix-Executable ###
-#    ln -sf /home/houben/OGS_source/ogs ${path_dir}/ogs
-
     ### Neuschreiben des qsub-Skripts ###
-
     submitfile=${path_dir}/qsub_mpi_${dir}.sh
 
 cat > ${submitfile} << EOF
-
-# Specify the number ob slots manually! In case you run the mpi_local_generate_ogs.py the number of cores has to be the same in both scripts
-# specify the path for 1) output file and 2) output directory and 3) job_name 4) the number of slots 5) the working directory
 
 #!/bin/bash
 
 #$ -S /bin/bash
 #$ -wd $path_dir
-#$ -N $path_dir
-#$ -o $path_dir/$JOB_ID$comment.OUT
-#$ -e $path_dir/$JOB_ID$comment.ERR
-#$ -l h_rt=60
+#$ -N SA_${path_dir: -9}
+#$ -o $path_dir/"$JOB_ID"$comment.OUT
+#$ -e $path_dir/"$JOB_ID"$comment.ERR
+#$ -l h_rt=7200
 #$ -l h_vmem=16G
-#$ -pe openmpi-orte 2
+#$ -pe openmpi-orte $NSLOTS
 
 # disable core dump (like this it's not working)
 # ulimit -c 0
@@ -69,6 +62,6 @@ EOF
     qsub ${submitfile}
     echo 'Your job should be in progress! Name of directory:'
     echo ${dir}
-    echo "Job submitted: " > ${path_dir}/${dir}.OUT
-    date > ${path_dir}/${dir}.OUT
+    #echo "Job submitted: " > ${path_dir}/${dir}.OUT
+    #date > ${path_dir}/${dir}.OUT
 done
